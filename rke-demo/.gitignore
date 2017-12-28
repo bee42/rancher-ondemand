@@ -1,0 +1,6 @@
+.terraform
+*.tfstate*
+*.tfplan
+archive
+.kube_config_cluster.yml
+cluster.yml
