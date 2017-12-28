@@ -44,6 +44,7 @@ Terrafrom should communicate with the DO-Cloud, so we need two things which have
   * Please take a note of the MD5-fingerprint of your ssh-key
 
 ## Configure Terraform
+### Set variables
 Terraform needs some parameters to securely communicate with your Digtal Ocean Account. There are different ways to do this, here we pass them as environment-variables:
 
     export TF_VAR_do_token=YOUR_DIGITALOCEAN_ACCESS_TOKEN
@@ -56,6 +57,7 @@ __Example__: set-tf-env-example.sh
 
 You have to replace the values according to your environment. If the one-liner to generate the MD5-fingerprint does not work for you (only tested on Ubuntu 16.04), you should simply use your MD5-fingerprint from the notes you've taken before.  :)
 
+### Create files
 Now we create some files for terraform to describe our desired infrastructure.
 
 First we need an provisioner to tell terraform which cloud we connect to:
@@ -69,13 +71,14 @@ Then we create a file describing our three docker-nodes, on which the Kubernetes
 
 __Example__: dockernodes.tf
 
+### Initialize terraform
 Next we have to initialize terraform simply with
 > terraform init
 
 To verify that all files are syntactically correct, please excute
 > terraform validate
 
-## Create infrastructure
+### Create infrastructure
 * We let terraform create a plan, which we can review:
 > terraform plan -out dockernodes.tfplan
 
