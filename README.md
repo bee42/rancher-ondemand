@@ -18,7 +18,7 @@ At the end we have an Kubernetes-Cluster with three nodes functioning as control
 - configure Digital Ocean Account
 - install terraform and RKE
 - clone repo and adjust environment-variables according to your environment
-- exceute quickstart.sh
+- exceute [quickstart.sh](./rke-demo/quickstart.sh)
 
 
 ## Prerequisites
@@ -53,23 +53,23 @@ Terraform needs some parameters to securely communicate with your Digtal Ocean A
     export TF_VAR_ssh_fingerprint=`ssh-keygen -E md5 -lf ${TF_VAR_pub_key} | awk '{print $2}' | sed 's/^MD5://g'`
 
 
-__Example__: set-tf-env-example.sh
+__Example__: [set-tf-env-example.sh](./rke-demo/set-tf-env-example.sh)
 
 You have to replace the values according to your environment. If the one-liner to generate the MD5-fingerprint does not work for you (only tested on Ubuntu 16.04), you should simply use your MD5-fingerprint from the notes you've taken before.  :)
 
 ### Create files
 Now we create some files for terraform to describe our desired infrastructure.
 
-First we need an provisioner to tell terraform which cloud we connect to:
+First we need an provider to tell terraform which cloud we connect to:
 
-__Example__: provisioner.tf
+__Example__: [provider.tf](./rke-demo/provider.tf)
 
 Then we create a file describing our three docker-nodes, on which the Kubernetes-Cluster will be installed later:
 * resource: Name, Baseimage (here: Ubuntu 16.04), RAM, Region etc.
 * connection: How can terraform connect to the created droplet
 * provision: Which commands should be executed, e.g. to install docker 
 
-__Example__: dockernodes.tf
+__Example__: [dockernodes.tf](./rke-demo/dockernodes.tf)
 
 ### Initialize terraform
 Next we have to initialize terraform simply with
@@ -98,15 +98,15 @@ rke config
 
 It asks you for all required values, please fill in the IP-Addresses of the created dockernodes.
 
-To generate it automatically, you can use the python-script **create_config.py**, which takes the IP-Addresses from the terraform-output and injects it into the cluster-template.
+To generate it automatically, you can use the python-script [create_config.py](./rke-demo/create_config.py), which takes the IP-Addresses from the terraform-output and injects it into the cluster-template.
 
 # Deploy Kubernetes
-After **cluster.yml** is generated, just enter
+After `cluster.yml` is generated, just enter
 ```bash
 rke up
 ```
 
-The Kubernetes-Cluster will be build in a few minutes, and a .kube_config_cluster.yml is saved to your working directory.
+The Kubernetes-Cluster will be build in a few minutes, and a `.kube_config_cluster.yml` is saved to your working directory.
 
 To test the success, you can execute for example
 ```bash
