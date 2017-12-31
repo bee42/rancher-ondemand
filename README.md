@@ -64,7 +64,7 @@ First we need an provisioner to tell terraform which cloud we connect to:
 
 __Example__: provisioner.tf
 
-Then we create a file describing our three docker-nodes, on which the Kubernetes-Cluster will be installed later.
+Then we create a file describing our three docker-nodes, on which the Kubernetes-Cluster will be installed later:
 * resource: Name, Baseimage (here: Ubuntu 16.04), RAM, Region etc.
 * connection: How can terraform connect to the created droplet
 * provision: Which commands should be executed, e.g. to install docker 
@@ -73,21 +73,28 @@ __Example__: dockernodes.tf
 
 ### Initialize terraform
 Next we have to initialize terraform simply with
-> terraform init
-
+```bash
+terraform init
+```
 To verify that all files are syntactically correct, please excute
-> terraform validate
-
+```bash
+terraform validate
+```
 ### Create infrastructure
 * We let terraform create a plan, which we can review:
-> terraform plan -out dockernodes.tfplan
-
-* Now we execute eexactly this plan:
-> terraform apply dockernodes.tfplan
+```bash
+terraform plan -out dockernodes.tfplan
+```
+* Now we execute exactly this plan:
+```bash
+terraform apply dockernodes.tfplan
+```
 
 # Generate RKE-Config
 You can generate the config maually with this command:
-> rke config
+```bash
+rke config
+```
 
 It asks you for all required values, please fill in the IP-Addresses of the created dockernodes.
 
@@ -95,13 +102,16 @@ To generate it automatically, you can use the python-script **create_config.py**
 
 # Deploy Kubernetes
 After **cluster.yml** is generated, just enter
-> rke up
+```bash
+rke up
+```
 
 The Kubernetes-Cluster will be build in a few minutes, and a .kube_config_cluster.yml is saved to your working directory.
 
 To test the success, you can execute for example
-> kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
-
+```bash
+kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
+```
 
 ## Links
 
