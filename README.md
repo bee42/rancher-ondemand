@@ -44,6 +44,7 @@ Terrafrom should communicate with the DO-Cloud, so we need two things which have
   * Please take a note of the MD5-fingerprint of your ssh-key
 
 ## Configure Terraform
+
 ### Set variables
 Terraform needs some parameters to securely communicate with your Digtal Ocean Account. There are different ways to do this, here we pass them as environment-variables:
 
@@ -90,7 +91,9 @@ terraform plan -out dockernodes.tfplan
 terraform apply dockernodes.tfplan
 ```
 
-# Generate RKE-Config
+## Provision kubernetes with rke
+
+### Generate RKE-Config
 You can generate the config maually with this command:
 ```bash
 rke config
@@ -100,7 +103,7 @@ It asks you for all required values, please fill in the IP-Addresses of the crea
 
 To generate it automatically, you can use the python-script [create_config.py](./rke-demo/create_config.py), which takes the IP-Addresses from the terraform-output and injects it into the cluster-template.
 
-# Deploy Kubernetes
+### Deploy Kubernetes
 After `cluster.yml` is generated, just enter
 ```bash
 rke up
@@ -112,6 +115,20 @@ To test the success, you can execute for example
 ```bash
 kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
 ```
+
+## ToDo's
+
+* Use Private Network IP's for kubernetes componentes (internal_address)
+* Setup a Digital Ocean Loadbalancer
+  * https://github.com/digitalocean/digitalocean-cloud-controller-manager
+  * https://thenewstack.io/tutorial-run-multi-node-kubernetes-cluster-digitalocean/
+* Add more security
+* Use different terraform resources for controlplane/etcd and worker
+* Generate rke config with terraform
+* Use calico network
+* Update new rancher
+* Add terraform KVM Setup
+* Add architecture design picture
 
 ## Links
 
