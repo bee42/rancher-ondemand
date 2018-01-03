@@ -26,12 +26,26 @@ At the end we have an Kubernetes-Cluster with three nodes functioning as control
 
 With terraform, we can write our infrastructure as code. If you don't already have terraform installed, please have a quick look at https://www.terraform.io/intro/getting-started/install.html
 
+Install at your MAC with:
+
+```
+$ brew install terraform
+```
+
 ### Rancher Kubernetes Engine (RKE)
+
 Get it from https://github.com/rancher/rke, where you can download the binary for your architecture.
 Please rename it to rke and make it available by setting the PATH-Variable of your environment.
 
+Install at your MAC with:
+
+```
+$ sudo curl -sL https://github.com/rancher/rke/releases/download/v0.0.9-dev/rke_darwin-amd64 > /usr/local/bin/rke
+$ sudo chmod +x /usr/local/bin/rke
+```
 
 ### Digital Ocean Account
+
 If you do not have an Digital Ocean account yet, please create one under https://www.digitalocean.com/
 
 Terrafrom should communicate with the DO-Cloud, so we need two things which have to be configured in the Account-Settings:
@@ -46,6 +60,7 @@ Terrafrom should communicate with the DO-Cloud, so we need two things which have
 ## Configure Terraform
 
 ### Set variables
+
 Terraform needs some parameters to securely communicate with your Digtal Ocean Account. There are different ways to do this, here we pass them as environment-variables:
 
     export TF_VAR_do_token=YOUR_DIGITALOCEAN_ACCESS_TOKEN
@@ -53,12 +68,30 @@ Terraform needs some parameters to securely communicate with your Digtal Ocean A
     export TF_VAR_pub_key=${TF_VAR_pvt_key}.pub
     export TF_VAR_ssh_fingerprint=`ssh-keygen -E md5 -lf ${TF_VAR_pub_key} | awk '{print $2}' | sed 's/^MD5://g'`
 
+__Hint__: terraform only supports ssh keys without password protection!
+
+```
+$ ssh-keygen -t ed25519 -f $HOME/.ssh/digitalocean-bee42-com -q -N "" -C "peter.rossbach@bee42.com"
+```
 
 __Example__: [set-tf-env-example.sh](./rke-demo/set-tf-env-example.sh)
 
 You have to replace the values according to your environment. If the one-liner to generate the MD5-fingerprint does not work for you (only tested on Ubuntu 16.04), you should simply use your MD5-fingerprint from the notes you've taken before.  :)
 
+
+Upload your SSH key to digital ocean (Topic security)
+
+Check your Digital Ocean access with:
+
+```
+$ curl -sL -X GET \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TF_VAR_do_token" \
+ "https://api.digitalocean.com/v2/regions" | jq "."
+```
+
 ### Create files
+
 Now we create some files for terraform to describe our desired infrastructure.
 
 First we need an provider to tell terraform which cloud we connect to:
@@ -73,6 +106,7 @@ Then we create a file describing our three docker-nodes, on which the Kubernetes
 __Example__: [dockernodes.tf](./rke-demo/dockernodes.tf)
 
 ### Initialize terraform
+
 Next we have to initialize terraform simply with
 ```bash
 terraform init
@@ -82,6 +116,7 @@ To verify that all files are syntactically correct, please excute
 terraform validate
 ```
 ### Create infrastructure
+
 * We let terraform create a plan, which we can review:
 ```bash
 terraform plan -out dockernodes.tfplan
@@ -94,6 +129,7 @@ terraform apply dockernodes.tfplan
 ## Provision kubernetes with rke
 
 ### Generate RKE-Config
+
 You can generate the config maually with this command:
 ```bash
 rke config
@@ -104,6 +140,7 @@ It asks you for all required values, please fill in the IP-Addresses of the crea
 To generate it automatically, you can use the python-script [create_config.py](./rke-demo/create_config.py), which takes the IP-Addresses from the terraform-output and injects it into the cluster-template.
 
 ### Deploy Kubernetes
+
 After `cluster.yml` is generated, just enter
 ```bash
 rke up
@@ -126,7 +163,13 @@ kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
 * Use different terraform resources for controlplane/etcd and worker
 * Generate rke config with terraform
 * Use calico network
-* Update new rancher
+* Validate installation with serverspec or goss
+  * https://github.com/aelsabbahy/goss
+  * https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
+  * http://serverspec.org/
+  * http://www.infrabricks.de/blog/2014/09/10/docker-container-mit-serverspec-testen/
+  * http://www.infrabricks.de/blog/2015/04/16/docker-container-mit-serverspetesten-teil-2/
+* Check update new rancher release
 * Add terraform KVM Setup
 * Add architecture design picture
 
