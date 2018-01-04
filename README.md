@@ -29,7 +29,7 @@ With terraform, we can write our infrastructure as code. If you don't already ha
 Install at your MAC with:
 
 ```
-$ brew install terraform
+$ brew install terraform kubernetes-cli
 ```
 
 ### Rancher Kubernetes Engine (RKE)
@@ -72,11 +72,12 @@ __Hint__: terraform only supports ssh keys without password protection!
 
 ```
 $ ssh-keygen -t ed25519 -f $HOME/.ssh/digitalocean-bee42-com -q -N "" -C "peter.rossbach@bee42.com"
+$ cat $HOME/.ssh/digitalocean-bee42-com | pbcopy
 ```
 
 __Example__: [set-tf-env-example.sh](./rke-demo/set-tf-env-example.sh)
 
-You have to replace the values according to your environment. If the one-liner to generate the MD5-fingerprint does not work for you (only tested on Ubuntu 16.04), you should simply use your MD5-fingerprint from the notes you've taken before.  :)
+You have to replace the values according to your environment. If the one-liner to generate the MD5-fingerprint does not work for you (only tested on Ubuntu 16.04 and MACOS), you should simply use your MD5-fingerprint from the notes you've taken before.  :)
 
 
 Upload your SSH key to digital ocean (Topic security)
@@ -109,21 +110,21 @@ __Example__: [dockernodes.tf](./rke-demo/dockernodes.tf)
 
 Next we have to initialize terraform simply with
 ```bash
-terraform init
+$ terraform init
 ```
 To verify that all files are syntactically correct, please excute
 ```bash
-terraform validate
+$ terraform validate
 ```
 ### Create infrastructure
 
 * We let terraform create a plan, which we can review:
 ```bash
-terraform plan -out dockernodes.tfplan
+$ terraform plan -out dockernodes.tfplan
 ```
 * Now we execute exactly this plan:
 ```bash
-terraform apply dockernodes.tfplan
+$ terraform apply dockernodes.tfplan
 ```
 
 ## Provision kubernetes with rke
@@ -132,7 +133,7 @@ terraform apply dockernodes.tfplan
 
 You can generate the config maually with this command:
 ```bash
-rke config
+$ rke config
 ```
 
 It asks you for all required values, please fill in the IP-Addresses of the created dockernodes.
@@ -143,14 +144,17 @@ To generate it automatically, you can use the python-script [create_config.py](.
 
 After `cluster.yml` is generated, just enter
 ```bash
-rke up
+$ rke up
 ```
 
 The Kubernetes-Cluster will be build in a few minutes, and a `.kube_config_cluster.yml` is saved to your working directory.
 
 To test the success, you can execute for example
 ```bash
-kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
+$ kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
+$ alias kc="kubectl --kubeconfig $(pwd)/.kube_config_cluster.yml"
+$ kc get nodes
+
 ```
 
 ## ToDo's
@@ -161,8 +165,8 @@ kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
   * https://thenewstack.io/tutorial-run-multi-node-kubernetes-cluster-digitalocean/
 * Add more security
 * Use different terraform resources for controlplane/etcd and worker
-* Generate rke config with terraform
-* Use calico network
+* Generate rke config with terraform and flexible numbers of controlplane master and workers
+* Use calico network at digitalocean?
 * Validate installation with serverspec or goss
   * https://github.com/aelsabbahy/goss
   * https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
@@ -172,6 +176,11 @@ kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
 * Check update new rancher release
 * Add terraform KVM Setup
 * Add architecture design picture
+* Add some examples
+  * kubernetes dashboard
+  * add ingress traefik or nginx loadbalancer
+  * setup helm at different namespaces
+  * setup service mesh
 
 ## Links
 
