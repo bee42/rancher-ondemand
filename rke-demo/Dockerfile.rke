@@ -1,0 +1,31 @@
+FROM alpine:3.7
+# Maintainer
+LABEL maintainer="maintainers@bee42.com"
+
+# Environment variables
+ENV RKE_VERSION="v0.0.9-dev"
+
+# System preparation & terraform installation
+RUN apk --no-cache add wget ca-certificates  git bash openssh-client && \
+    wget -O /usr/local/bin/rke https://github.com/rancher/rke/releases/download/${RKE_VERSION}/rke_linux-amd64 && \
+    chmod +x /usr/local/bin/rke && \
+    apk del --purge wget  && \
+    rm -rf /var/cache/apk/* 
+
+ENV RKE_USER=rke \
+    RKE_UID=1000 \
+    RKE_GID=1000 \
+    RKE_HOME=/rke
+
+RUN addgroup -S $RKE_USER -g ${RKE_GID} \
+    && adduser -S  \
+    -g $RKE_USER \
+    -h $RKE_HOME \
+    -u ${RKE_UID} \
+    $RKE_USER
+
+USER $RKE_USER
+
+WORKDIR $RKE_HOME
+
+

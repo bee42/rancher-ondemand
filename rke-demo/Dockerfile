@@ -33,3 +33,4 @@ COPY --chown=1000:1000 . /${TERRAFORM_HOME}
 RUN terraform init
 SHELL ["/bin/bash"]
 VOLUME [ "${TERRAFORM_HOME}" ]
+ENTRYPOINT [ "/tf/entrypoint.sh" ]
