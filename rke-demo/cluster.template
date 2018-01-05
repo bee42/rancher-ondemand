@@ -1,7 +1,7 @@
 # If you intened to deploy Kubernetes in an air-gapped envrionment,
 # please consult the documentation on how to configure custom RKE images.
 nodes:
-- address: $server0
+- address: ${server}
   internal_address: ""
   role:
   - controlplane
@@ -11,7 +11,7 @@ nodes:
   docker_socket: /var/run/docker.sock
   ssh_key: ""
   ssh_key_path: ""
-- address: $server1
+- address: ${server1}
   internal_address: ""
   role:
   - worker 
