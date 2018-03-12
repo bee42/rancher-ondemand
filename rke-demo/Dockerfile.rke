@@ -3,7 +3,7 @@ FROM alpine:3.7
 LABEL maintainer="maintainers@bee42.com"
 
 # Environment variables
-ENV RKE_VERSION="v0.0.9-dev"
+ENV RKE_VERSION="v0.1.2"
 
 # System preparation & terraform installation
 RUN apk --no-cache add wget ca-certificates  git bash openssh-client && \
