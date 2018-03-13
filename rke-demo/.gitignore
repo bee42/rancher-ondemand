@@ -3,4 +3,6 @@
 *.tfplan
 archive
 .kube_config_cluster.yml
+kube_config_cluster.yml
+private_key
 cluster.yml

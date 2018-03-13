@@ -2,6 +2,8 @@
 
 Install Rancher 2.0 Kubernetes on Demand with RKE
 
+More information in our [blogpost](https://www.bee42.com/de/blog/Kubernetes_Cluster_mit_RKE_containerized/).
+
 ## Abstract
 
 We want to install an Kubernetes-Cluster into the Digital Ocean Cloud. To automate this, we provision our infrastructure with terraform and deploy the cluster with Rancher Kubernetes Engine (RKE).
@@ -16,33 +18,13 @@ At the end we have an Kubernetes-Cluster with three nodes functioning as control
 
 **Quickstart**
 - configure Digital Ocean Account
-- install terraform and RKE
-- clone repo and adjust environment-variables according to your environment
-- exceute [quickstart.sh](./rke-demo/quickstart.sh)
+- build containers
+- exceute ```start.sh $DO_TOKEN```
 
+## Architecture
+![Architecture](/bee42-rke-tools.png)
 
 ## Prerequisites
-### Terraform by HashiCorp
-
-With terraform, we can write our infrastructure as code. If you don't already have terraform installed, please have a quick look at https://www.terraform.io/intro/getting-started/install.html
-
-Install at your MAC with:
-
-```
-$ brew install terraform kubernetes-cli
-```
-
-### Rancher Kubernetes Engine (RKE)
-
-Get it from https://github.com/rancher/rke, where you can download the binary for your architecture.
-Please rename it to rke and make it available by setting the PATH-Variable of your environment.
-
-Install at your MAC with:
-
-```
-$ sudo curl -sL https://github.com/rancher/rke/releases/download/v0.0.9-dev/rke_darwin-amd64 > /usr/local/bin/rke
-$ sudo chmod +x /usr/local/bin/rke
-```
 
 ### Digital Ocean Account
 
@@ -57,103 +39,18 @@ Terrafrom should communicate with the DO-Cloud, so we need two things which have
   * https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets
   * Please take a note of the MD5-fingerprint of your ssh-key
 
-## Configure Terraform
+### Build container
 
-### Set variables
-
-Terraform needs some parameters to securely communicate with your Digtal Ocean Account. There are different ways to do this, here we pass them as environment-variables:
-
-    export TF_VAR_do_token=YOUR_DIGITALOCEAN_ACCESS_TOKEN
-    export TF_VAR_pvt_key=$HOME/.ssh/id_rsa
-    export TF_VAR_pub_key=${TF_VAR_pvt_key}.pub
-    export TF_VAR_ssh_fingerprint=`ssh-keygen -E md5 -lf ${TF_VAR_pub_key} | awk '{print $2}' | sed 's/^MD5://g'`
-
-__Hint__: terraform only supports ssh keys without password protection!
-
-```
-$ ssh-keygen -t ed25519 -f $HOME/.ssh/digitalocean-bee42-com -q -N "" -C "peter.rossbach@bee42.com"
-$ cat $HOME/.ssh/digitalocean-bee42-com | pbcopy
-```
-
-__Example__: [set-tf-env-example.sh](./rke-demo/set-tf-env-example.sh)
-
-You have to replace the values according to your environment. If the one-liner to generate the MD5-fingerprint does not work for you (only tested on Ubuntu 16.04 and MACOS), you should simply use your MD5-fingerprint from the notes you've taken before.  :)
-
-
-Upload your SSH key to digital ocean (Topic security)
-
-Check your Digital Ocean access with:
-
-```
-$ curl -sL -X GET \
- -H "Content-Type: application/json" \
- -H "Authorization: Bearer $TF_VAR_do_token" \
- "https://api.digitalocean.com/v2/regions" | jq "."
-```
-
-### Create files
-
-Now we create some files for terraform to describe our desired infrastructure.
-
-First we need an provider to tell terraform which cloud we connect to:
-
-__Example__: [provider.tf](./rke-demo/provider.tf)
-
-Then we create a file describing our three docker-nodes, on which the Kubernetes-Cluster will be installed later:
-* resource: Name, Baseimage (here: Ubuntu 16.04), RAM, Region etc.
-* connection: How can terraform connect to the created droplet
-* provision: Which commands should be executed, e.g. to install docker 
-
-__Example__: [dockernodes.tf](./rke-demo/dockernodes.tf)
-
-### Initialize terraform
-
-Next we have to initialize terraform simply with
-```bash
-$ terraform init
-```
-To verify that all files are syntactically correct, please excute
-```bash
-$ terraform validate
-```
-### Create infrastructure
-
-* We let terraform create a plan, which we can review:
-```bash
-$ terraform plan -out dockernodes.tfplan
-```
-* Now we execute exactly this plan:
-```bash
-$ terraform apply dockernodes.tfplan
-```
-
-## Provision kubernetes with rke
-
-### Generate RKE-Config
-
-You can generate the config maually with this command:
-```bash
-$ rke config
-```
-
-It asks you for all required values, please fill in the IP-Addresses of the created dockernodes.
-
-To generate it automatically, you can use the python-script [create_config.py](./rke-demo/create_config.py), which takes the IP-Addresses from the terraform-output and injects it into the cluster-template.
+ ```
+ make build
+ make build rke
+ ```
 
 ### Deploy Kubernetes
 
-After `cluster.yml` is generated, just enter
-```bash
-$ rke up
-```
+```start.sh $DO_TOKEN```
 
 The Kubernetes-Cluster will be build in a few minutes, and a `.kube_config_cluster.yml` is saved to your working directory.
-
-To test the success, you can execute for example
-```bash
-$ kubectl --kubeconfig .kube_config_cluster.yml get all --all-namespaces
-$ alias kc="kubectl --kubeconfig $(pwd)/.kube_config_cluster.yml"
-$ kc get nodes
 
 ```
 
@@ -164,8 +61,8 @@ $ kc get nodes
   * https://github.com/digitalocean/digitalocean-cloud-controller-manager
   * https://thenewstack.io/tutorial-run-multi-node-kubernetes-cluster-digitalocean/
 * Add more security
-* Use different terraform resources for controlplane/etcd and worker
-* Generate rke config with terraform and flexible numbers of controlplane master and workers
+* ~~Use different terraform resources for controlplane/etcd and worker~~
+* ~~Generate rke config with terraform and flexible numbers of controlplane master and workers~~
 * Use calico network at digitalocean?
 * Validate installation with serverspec or goss
   * https://github.com/aelsabbahy/goss
@@ -175,7 +72,7 @@ $ kc get nodes
   * http://www.infrabricks.de/blog/2015/04/16/docker-container-mit-serverspetesten-teil-2/
 * Check update new rancher release
 * Add terraform KVM Setup
-* Add architecture design picture
+* ~~Add architecture design picture~~
 * Add some examples
   * kubernetes dashboard
   * add ingress traefik or nginx loadbalancer
