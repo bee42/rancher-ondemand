@@ -22,7 +22,7 @@ At the end we have an Kubernetes-Cluster with three nodes functioning as control
 - exceute ```start.sh $DO_TOKEN```
 
 ## Architecture
-![Architecture](/bee42-rke-tools.png)
+![Architecture](/rke-container-demo/bee42-rke-tools.png)
 
 ## Prerequisites
 
