@@ -1,7 +1,7 @@
 - address: ${worker_address}
   internal_address: ""
   role:
-  - worker 
+  - worker
   hostname_override: ""
   user: root
   docker_socket: /var/run/docker.sock
