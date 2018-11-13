@@ -1,6 +1,6 @@
 variable "do_token" {}
 variable "do_region" {
-    default="ams2"
+    default="fra1"
 }
 variable "ssh_cluster_public_key" {
     description="Path to SSH Public Key"

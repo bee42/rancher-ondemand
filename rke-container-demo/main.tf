@@ -9,7 +9,7 @@ resource "digitalocean_ssh_key" "cluster_key" {
 
 resource "digitalocean_droplet" "controlplane" {
     count = "${var.controlplane_count}"
-    image = "ubuntu-18-04-x64"
+    image = "ubuntu-16-04-x64"
     name = "controlplane-${count.index}"
     region = "${var.do_region}"
     size = "${var.controlplane_size}"
@@ -34,7 +34,7 @@ resource "digitalocean_droplet" "controlplane" {
 
 resource "digitalocean_droplet" "worker" {
     count = "${var.worker_count}"
-    image = "ubuntu-18-04-x64"
+    image = "ubuntu-16-04-x64"
     name = "worker-${count.index}"
     region = "${var.do_region}"
     size = "${var.worker_size}"
@@ -51,7 +51,7 @@ resource "digitalocean_droplet" "worker" {
   provisioner "remote-exec" {
     inline = [
       # install recommended docker version
-      "curl https://releases.rancher.com/install-docker/18.06.sh | sh"
+      "curl https://releases.rancher.com/install-docker/17.03.sh | sh"
     ]
   }
 
