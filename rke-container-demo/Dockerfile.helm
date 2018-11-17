@@ -1,0 +1,8 @@
+FROM dtzar/helm-kubectl:2.11.0
+
+LABEL maintainer="maintainer@bee42.com"
+
+COPY deploy-dockersample.sh /config/
+RUN git clone https://github.com/tillepille/example-voting-app
+
+CMD ["kubectl", "get","nodes"]

@@ -1,6 +1,6 @@
 variable "do_token" {}
 variable "do_region" {
-    default="ams2"
+    default="fra1"
 }
 variable "ssh_cluster_public_key" {
     description="Path to SSH Public Key"
@@ -17,8 +17,11 @@ variable "worker_count" {
     default=2
 }
 variable "worker_size" {
-    default="8gb"
+    default="s-4vcpu-8gb"
 }
 variable "controlplane_size" {
-    default="4gb"
+    default="s-2vcpu-4gb"
+}
+variable "base_image" {
+    default="ubuntu-16-04-x64"
 }

@@ -1,9 +1,9 @@
-FROM alpine:3.7
+FROM alpine:3.8
 # Maintainer
 LABEL maintainer="maintainers@bee42.com"
 
 # Environment variables
-ENV TERRAFORM_VERSION="0.11.3"
+ENV TERRAFORM_VERSION="0.11.10"
 
 # System preparation & terraform installation
 RUN apk --no-cache add wget ca-certificates unzip git bash openssh-client && \

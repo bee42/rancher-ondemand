@@ -9,7 +9,7 @@ resource "digitalocean_ssh_key" "cluster_key" {
 
 resource "digitalocean_droplet" "controlplane" {
     count = "${var.controlplane_count}"
-    image = "ubuntu-16-04-x64"
+    image = "${var.base_image}"
     name = "controlplane-${count.index}"
     region = "${var.do_region}"
     size = "${var.controlplane_size}"
@@ -34,7 +34,7 @@ resource "digitalocean_droplet" "controlplane" {
 
 resource "digitalocean_droplet" "worker" {
     count = "${var.worker_count}"
-    image = "ubuntu-16-04-x64"
+    image = "${var.base_image}"
     name = "worker-${count.index}"
     region = "${var.do_region}"
     size = "${var.worker_size}"
@@ -56,5 +56,3 @@ resource "digitalocean_droplet" "worker" {
   }
 
 }
-
-
