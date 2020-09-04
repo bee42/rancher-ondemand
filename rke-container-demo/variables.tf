@@ -1,6 +1,6 @@
 variable "do_token" {}
 variable "do_region" {
-    default="ams2"
+    default="fra1"
 }
 variable "ssh_cluster_public_key" {
     description="Path to SSH Public Key"
@@ -14,7 +14,7 @@ variable "controlplane_count" {
 }
 variable "worker_count" {
     description="Describes the amount of worker for the clusters"
-    default=2
+    default=3
 }
 variable "worker_size" {
     default="8gb"

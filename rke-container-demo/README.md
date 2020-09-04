@@ -38,6 +38,10 @@ Terrafrom should communicate with the DO-Cloud, so we need two things which have
 * Add SSH-Key
   * https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets
   * Please take a note of the MD5-fingerprint of your ssh-key
+* Check versions
+  * https://rancher.com/docs/rancher/v2.x/en/installation/requirements/installing-docker/
+  * https://hub.docker.com/r/bitnami/kubectl/tags
+
 
 ### Build container
 
@@ -48,11 +52,18 @@ Terrafrom should communicate with the DO-Cloud, so we need two things which have
 
 ### Deploy Kubernetes
 
-```start.sh $DO_TOKEN```
+```./start.sh $DO_TOKEN```
 
 The Kubernetes-Cluster will be build in a few minutes, and a `.kube_config_cluster.yml` is saved to your working directory.
 
 ```
+export KUBECONFIG=$(pwd)/kube_config_cluster.yml
+kubectl get nodes
+```
+
+### Clean up
+
+```./destroy.sh $DO_TOKEN```
 
 ## ToDo's
 
@@ -86,4 +97,3 @@ The Kubernetes-Cluster will be build in a few minutes, and a `.kube_config_clust
 * https://schd.ws/hosted_files/kccncna17/d8/Hacking%20and%20Hardening%20Kubernetes%20By%20Example%20v2.pdf	
 * https://github.com/garethr/kubetest
 * https://www.digitalocean.com/community/tutorials/how-to-use-terraform-with-digitalocean
-
